@@ -97,16 +97,13 @@ class SmtpController
                 // Enable crypto for secure connection
                 stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT);
                 Logger::info("TLS encryption enabled successfully");
+                
+                // Send HELO again after TLS
+                fputs($socket, "EHLO " . $_SERVER['SERVER_NAME'] . "\r\n");
+                $response = fgets($socket, 1024);
             } else {
                 Logger::info("STARTTLS is disabled, proceeding without encryption");
             }
-            
-            // Enable crypto for secure connection
-            stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT);
-            
-            // Send HELO again after TLS
-            fputs($socket, "EHLO " . $_SERVER['SERVER_NAME'] . "\r\n");
-            $response = fgets($socket, 1024);
             
             // Authenticate
             fputs($socket, "AUTH LOGIN\r\n");
