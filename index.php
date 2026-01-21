@@ -1,4 +1,8 @@
 <?php
+// Suppress warning messages from being displayed
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+
 require_once 'controller/SmtpController.php';
 
 $controller = new SmtpController();
