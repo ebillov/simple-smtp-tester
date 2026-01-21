@@ -9,6 +9,7 @@ class SmtpController
     private $smtpPort;
     private $smtpUsername;
     private $smtpPassword;
+    private $useStartTls;
 
     /**
      * Constructor - Load SMTP configuration from .env file
@@ -26,6 +27,8 @@ class SmtpController
         $this->smtpPort = EnvLoader::get('SMTP_PORT', 587);
         $this->smtpUsername = EnvLoader::get('SMTP_USERNAME', '');
         $this->smtpPassword = EnvLoader::get('SMTP_PASSWORD', '');
+        $useStartTlsEnv = EnvLoader::get('SMTP_USE_STARTTLS', 'true');
+        $this->useStartTls = strtolower($useStartTlsEnv) === 'true' || $useStartTlsEnv === '1';
 
         // Validate that credentials are set
         if (empty($this->smtpHost) || empty($this->smtpPort)) {
@@ -74,19 +77,28 @@ class SmtpController
             // Send HELO command
             fputs($socket, "EHLO " . $_SERVER['SERVER_NAME'] . "\r\n");
             $response = fgets($socket, 1024);
-            
-            // Start TLS encryption
-            fputs($socket, "STARTTLS\r\n");
-            $response = fgets($socket, 1024);
 
             if (extension_loaded('openssl')) {
                 Logger::info("OpenSSL is enabled with version: " . OPENSSL_VERSION_TEXT);
             } else {
                 Logger::info("OpenSSL is NOT enabled");
             }
-            
-            if (strpos($response, '220') === false) {
-                throw new Exception('Failed to start TLS encryption.');
+
+            // If STARTTLS is enabled in config
+            if ($this->useStartTls) {
+                Logger::info("Starting TLS encryption...");
+                fputs($socket, "STARTTLS\r\n");
+                $response = fgets($socket, 1024);
+                
+                if (strpos($response, '220') === false) {
+                    throw new Exception('Failed to start TLS encryption.');
+                }
+                
+                // Enable crypto for secure connection
+                stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT);
+                Logger::info("TLS encryption enabled successfully");
+            } else {
+                Logger::info("STARTTLS is disabled, proceeding without encryption");
             }
             
             // Enable crypto for secure connection
