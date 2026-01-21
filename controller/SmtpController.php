@@ -1,6 +1,7 @@
 <?php
 
 require_once dirname(__DIR__) . '/config/EnvLoader.php';
+require_once dirname(__DIR__) . '/config/Logger.php';
 
 class SmtpController
 {
@@ -14,6 +15,9 @@ class SmtpController
      */
     public function __construct()
     {
+        // Initialize logger
+        Logger::init();
+
         // Load environment variables from .env file
         EnvLoader::load();
 
@@ -25,8 +29,11 @@ class SmtpController
 
         // Validate that credentials are set
         if (empty($this->smtpHost) || empty($this->smtpPort)) {
+            Logger::error('SMTP credentials not configured in .env file');
             throw new Exception('SMTP credentials not configured in .env file');
         }
+
+        Logger::info('SmtpController initialized successfully');
     }
     
     /**
@@ -35,6 +42,8 @@ class SmtpController
     public function sendEmail($from, $to, $subject, $content)
     {
         try {
+            Logger::info("Attempting to send email from: {$from} to: {$to}");
+
             // Validate email addresses
             if (!filter_var($from, FILTER_VALIDATE_EMAIL)) {
                 throw new Exception('Invalid sender email address.');
@@ -43,19 +52,24 @@ class SmtpController
             if (!filter_var($to, FILTER_VALIDATE_EMAIL)) {
                 throw new Exception('Invalid recipient email address.');
             }
-            
-            // Create SMTP connection
+
+            Logger::info("Email addresses validated successfully");
+            Logger::info("Connecting to SMTP server: {$this->smtpHost}:{$this->smtpPort}");
             $socket = fsockopen($this->smtpHost, $this->smtpPort, $errno, $errstr, 30);
             
             if (!$socket) {
                 throw new Exception("Failed to connect to SMTP server: $errstr ($errno)");
             }
+
+            Logger::info("Connected to SMTP server successfully");
             
             // Read greeting
             $response = fgets($socket, 1024);
             if (strpos($response, '220') === false) {
                 throw new Exception('SMTP connection failed.');
             }
+
+            Logger::info("SMTP server greeting received");
             
             // Send HELO command
             fputs($socket, "EHLO " . $_SERVER['SERVER_NAME'] . "\r\n");
@@ -138,13 +152,16 @@ class SmtpController
             // Close connection
             fputs($socket, "QUIT\r\n");
             fclose($socket);
-            
+
+            Logger::success("Email sent successfully from {$from} to {$to} with subject: {$subject}");
             return true;
             
         } catch (Exception $e) {
-            error_log('SMTP Error: ' . $e->getMessage());
+            Logger::error("SMTP Error: " . $e->getMessage());
+            if (isset($socket) && is_resource($socket)) {
+                fclose($socket);
+            }
             return false;
         }
     }
 }
-?>

@@ -73,4 +73,3 @@ class EnvLoader
         return self::$env;
     }
 }
-?>
