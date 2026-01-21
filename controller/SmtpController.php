@@ -1,11 +1,33 @@
 <?php
 
+require_once dirname(__DIR__) . '/config/EnvLoader.php';
+
 class SmtpController
 {
-    private $smtpHost = 'smtp.gmail.com';      // SMTP server
-    private $smtpPort = 587;                    // SMTP port (TLS)
-    private $smtpUsername = 'your-email@gmail.com';  // Your email
-    private $smtpPassword = 'your-app-password';     // Your app password
+    private $smtpHost;
+    private $smtpPort;
+    private $smtpUsername;
+    private $smtpPassword;
+
+    /**
+     * Constructor - Load SMTP configuration from .env file
+     */
+    public function __construct()
+    {
+        // Load environment variables from .env file
+        EnvLoader::load();
+
+        // Set SMTP configuration from environment variables
+        $this->smtpHost = EnvLoader::get('SMTP_HOST', 'smtp.gmail.com');
+        $this->smtpPort = EnvLoader::get('SMTP_PORT', 587);
+        $this->smtpUsername = EnvLoader::get('SMTP_USERNAME', '');
+        $this->smtpPassword = EnvLoader::get('SMTP_PASSWORD', '');
+
+        // Validate that credentials are set
+        if (empty($this->smtpUsername) || empty($this->smtpPassword)) {
+            throw new Exception('SMTP credentials not configured in .env file');
+        }
+    }
     
     /**
      * Send email via SMTP
