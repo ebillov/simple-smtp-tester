@@ -78,6 +78,12 @@ class SmtpController
             // Start TLS encryption
             fputs($socket, "STARTTLS\r\n");
             $response = fgets($socket, 1024);
+
+            if (extension_loaded('openssl')) {
+                Logger::info("OpenSSL is enabled with version: " . OPENSSL_VERSION_TEXT);
+            } else {
+                Logger::info("OpenSSL is NOT enabled");
+            }
             
             if (strpos($response, '220') === false) {
                 throw new Exception('Failed to start TLS encryption.');
