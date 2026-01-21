@@ -24,7 +24,7 @@ class SmtpController
         $this->smtpPassword = EnvLoader::get('SMTP_PASSWORD', '');
 
         // Validate that credentials are set
-        if (empty($this->smtpUsername) || empty($this->smtpPassword)) {
+        if (empty($this->smtpHost) || empty($this->smtpPort)) {
             throw new Exception('SMTP credentials not configured in .env file');
         }
     }
