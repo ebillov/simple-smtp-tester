@@ -144,12 +144,27 @@ class SmtpController
         $response = $this->sendSmtpCommand($socket, "AUTH LOGIN");
         
         if (strpos($response, '334') !== false) {
-            Logger::info("Sending username...");
-            $response = $this->sendSmtpCommand($socket, base64_encode($this->smtpUsername));
+            Logger::info("Sending username: " . $this->smtpUsername);
+            $encodedUsername = base64_encode($this->smtpUsername);
+            Logger::info("Base64 encoded username: " . $encodedUsername);
+            $response = $this->sendSmtpCommand($socket, $encodedUsername);
             Logger::info("Username response: " . trim($response));
             
-            Logger::info("Sending password...");
-            $response = $this->sendSmtpCommand($socket, base64_encode($this->smtpPassword));
+            if (strpos($response, '535') !== false) {
+                Logger::error("Authentication failed at username stage - check credentials");
+                return false;
+            }
+            
+            if (strpos($response, '334') === false) {
+                Logger::error("Unexpected response after username. Response: " . trim($response));
+                return false;
+            }
+            
+            Logger::info("Sending password (masked)...");
+            $encodedPassword = base64_encode($this->smtpPassword);
+            Logger::info("Base64 encoded password length: " . strlen($encodedPassword) . " chars");
+            Logger::info("Password length before encoding: " . strlen($this->smtpPassword) . " chars");
+            $response = $this->sendSmtpCommand($socket, $encodedPassword);
             Logger::info("Password response: " . trim($response));
             
             if (strpos($response, '235') !== false) {
