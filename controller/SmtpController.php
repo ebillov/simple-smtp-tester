@@ -37,42 +37,42 @@ class SmtpController
         $this->requireAuth = strtolower($requireAuthEnv) === 'true' || $requireAuthEnv === '1';
         
         // Auto-detect security based on port if not explicitly set
-        if (empty($configuredSecurity)) {
-            if ($this->smtpPort == 465) {
-                $this->smtpSecurity = 'ssl';
-            } else if ($this->smtpPort == 587) {
-                $this->smtpSecurity = 'starttls';
-            } else if ($this->smtpPort == 25) {
-                $this->smtpSecurity = 'starttls'; // Port 25 typically uses STARTTLS
-            } else {
-                $this->smtpSecurity = 'starttls'; // Default to STARTTLS
-            }
-            Logger::info("Auto-detected security mode: {$this->smtpSecurity} for port {$this->smtpPort}");
-        } else {
-            $this->smtpSecurity = $configuredSecurity;
-        }
+        // if (empty($configuredSecurity)) {
+        //     if ($this->smtpPort == 465) {
+        //         $this->smtpSecurity = 'ssl';
+        //     } else if ($this->smtpPort == 587) {
+        //         $this->smtpSecurity = 'starttls';
+        //     } else if ($this->smtpPort == 25) {
+        //         $this->smtpSecurity = 'starttls'; // Port 25 typically uses STARTTLS
+        //     } else {
+        //         $this->smtpSecurity = 'starttls'; // Default to STARTTLS
+        //     }
+        //     Logger::info("Auto-detected security mode: {$this->smtpSecurity} for port {$this->smtpPort}");
+        // } else {
+        //     $this->smtpSecurity = $configuredSecurity;
+        // }
 
-        // Validate security option
-        if (!in_array($this->smtpSecurity, ['starttls', 'ssl', 'none'])) {
-            Logger::error('Invalid SMTP_SECURITY value. Must be: starttls, ssl, or none');
-            throw new Exception('Invalid SMTP_SECURITY value in .env file');
-        }
+        // // Validate security option
+        // if (!in_array($this->smtpSecurity, ['starttls', 'ssl', 'none'])) {
+        //     Logger::error('Invalid SMTP_SECURITY value. Must be: starttls, ssl, or none');
+        //     throw new Exception('Invalid SMTP_SECURITY value in .env file');
+        // }
         
-        // Validate port/security combination
-        if ($this->smtpPort == 25 && $this->smtpSecurity === 'ssl') {
-            Logger::warning("Port 25 typically doesn't use implicit SSL. Switching to STARTTLS.");
-            $this->smtpSecurity = 'starttls';
-        }
-        if ($this->smtpPort == 465 && $this->smtpSecurity !== 'ssl') {
-            Logger::warning("Port 465 typically uses implicit SSL. Switching to SSL.");
-            $this->smtpSecurity = 'ssl';
-        }
+        // // Validate port/security combination
+        // if ($this->smtpPort == 25 && $this->smtpSecurity === 'ssl') {
+        //     Logger::warning("Port 25 typically doesn't use implicit SSL. Switching to STARTTLS.");
+        //     $this->smtpSecurity = 'starttls';
+        // }
+        // if ($this->smtpPort == 465 && $this->smtpSecurity !== 'ssl') {
+        //     Logger::warning("Port 465 typically uses implicit SSL. Switching to SSL.");
+        //     $this->smtpSecurity = 'ssl';
+        // }
 
-        // Validate that credentials are set
-        if (empty($this->smtpHost) || empty($this->smtpPort)) {
-            Logger::error('SMTP credentials not configured in .env file');
-            throw new Exception('SMTP credentials not configured in .env file');
-        }
+        // // Validate that credentials are set
+        // if (empty($this->smtpHost) || empty($this->smtpPort)) {
+        //     Logger::error('SMTP credentials not configured in .env file');
+        //     throw new Exception('SMTP credentials not configured in .env file');
+        // }
 
         Logger::info('SmtpController initialized successfully');
     }

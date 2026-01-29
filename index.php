@@ -165,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     id="from" 
                     name="from" 
                     placeholder="your@example.com"
-                    value="<?php echo isset($_POST['from']) ? htmlspecialchars($_POST['from']) : 'ebillov@gmail.com'; ?>"
+                    value="<?php echo isset($_POST['from']) ? htmlspecialchars($_POST['from']) : 'noreply@c9.com.au'; ?>"
                     required
                 >
             </div>
@@ -177,7 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     id="to" 
                     name="to" 
                     placeholder="recipient@example.com"
-                    value="<?php echo isset($_POST['to']) ? htmlspecialchars($_POST['to']) : 'virson.ebillo@c9.com.au'; ?>"
+                    value="<?php echo isset($_POST['to']) ? htmlspecialchars($_POST['to']) : 'hosting@c9.com.au'; ?>"
                     required
                 >
             </div>
@@ -189,7 +189,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     id="subject" 
                     name="subject" 
                     placeholder="Email subject"
-                    value="<?php echo isset($_POST['subject']) ? htmlspecialchars($_POST['subject']) : 'Test Email'; ?>"
+                    value="<?php echo isset($_POST['subject']) ? htmlspecialchars($_POST['subject']) : 'C9 Test Email'; ?>"
                     required
                 >
             </div>
@@ -201,7 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     name="content" 
                     placeholder="Your email message"
                     required
-                ><?php echo isset($_POST['content']) ? htmlspecialchars($_POST['content']) : 'Test email content.'; ?></textarea>
+                ><?php echo isset($_POST['content']) ? htmlspecialchars($_POST['content']) : 'Test email content by C9. Please ignore.'; ?></textarea>
             </div>
             
             <button type="submit">Send Email</button>
