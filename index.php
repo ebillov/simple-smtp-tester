@@ -1,7 +1,7 @@
 <?php
 // Suppress warning messages from being displayed
-// error_reporting(E_ALL);
-// ini_set('display_errors', 0);
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
 
 require_once 'controller/SmtpController.php';
 
@@ -47,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             justify-content: center;
             align-items: center;
             padding: 20px;
+            flex-direction: column;
         }
         
         .container {
@@ -143,6 +144,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border: 1px solid #f5c6cb;
             display: block;
         }
+
+        .log_container {
+            width: 100%;
+            max-width: 100%;
+            margin-top: 30px;
+        }
+
+        .log_output {
+            background: #1e1e1e;
+            color: #00ff2d;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            overflow-wrap: break-word; /* modern alternative to word-wrap */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -206,6 +228,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             <button type="submit">Send Email</button>
         </form>
+    </div>
+    <div class="container log_container">
+        <h2>Log Output</h2>
+        <pre class="log_output"><?php echo htmlspecialchars(file_get_contents(Logger::getLogFile())); ?></pre>
     </div>
 </body>
 </html>

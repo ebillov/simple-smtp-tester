@@ -20,7 +20,11 @@ class Logger
         }
 
         self::$logDir = $logDir;
-        self::$logFile = $logDir . '/smtp_' . date('Y-m-d') . '.log';
+        self::$logFile = $logDir . '/smtp.log';
+
+        //Initially, clear the contents
+        file_put_contents(self::$logFile, '');
+
     }
 
     /**
