@@ -28,10 +28,10 @@ class SmtpController
         $this->smtpPort = EnvLoader::get('SMTP_PORT', 587);
         $this->smtpUsername = EnvLoader::get('SMTP_USERNAME', '');
         $this->smtpPassword = EnvLoader::get('SMTP_PASSWORD', '');
-        // $this->smtpSecurity = EnvLoader::get('SMTP_SECURITY', '');
+        $this->smtpSecurity = EnvLoader::get('SMTP_SECURITY', '');
         
         // Get security setting from env, but auto-detect based on port if needed
-        $configuredSecurity = strtolower(EnvLoader::get('SMTP_SECURITY', ''));
+        // $configuredSecurity = strtolower(EnvLoader::get('SMTP_SECURITY', ''));
         
         // Get authentication requirement setting
         $requireAuthEnv = EnvLoader::get('SMTP_REQUIRE_AUTH', 'true');
