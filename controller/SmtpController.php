@@ -75,7 +75,7 @@ class SmtpController
         //     throw new Exception('SMTP credentials not configured in .env file');
         // }
 
-        Logger::info('SmtpController initialized successfully');
+        // Logger::info('SmtpController initialized successfully');
     }
 
     /**
@@ -189,6 +189,10 @@ class SmtpController
         $socket = null;
         
         try {
+
+            //Clear the log file
+            Logger::clearLog();
+
             Logger::info("Attempting to send email from: {$from} to: {$to}");
 
             // Validate email addresses

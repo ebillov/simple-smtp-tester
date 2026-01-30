@@ -22,9 +22,19 @@ class Logger
         self::$logDir = $logDir;
         self::$logFile = $logDir . '/smtp.log';
 
-        //Initially, clear the contents
-        file_put_contents(self::$logFile, '');
+    }
 
+    /**
+     * A method to clear the log file
+     * @return void
+     */
+    public static function clearLog()
+    {
+        if (self::$logDir === null) {
+            self::init();
+        }
+
+        file_put_contents(self::$logFile, '');
     }
 
     /**
